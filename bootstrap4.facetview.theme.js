@@ -62,23 +62,23 @@ function theFacetview(options) {
     }
 
     // make space for the search options container at the top
-    thefacetview += '<div class="facetview_search_options_container"></div>';
+    thefacetview += '<div class="row facetview_search_options_container"></div>';
 
     // make space for the selected filters
     thefacetview += '<div class="row"><div class="col-md-12"><div class="btn-toolbar" id="facetview_selectedfilters"></div></div></div>';
 
     // make space at the top for the pager
-    thefacetview += '<div class="facetview_metadata"></div>';
+    thefacetview += '<div class="row facetview_metadata"></div>';
 
     // insert loading notification
-    thefacetview += '<div class="hide hidden facetview_searching" style="display:none"></div>'
+    thefacetview += '<div class="hide hidden facetview_searching" style="display:none !important"></div>'
 
     // insert the table within which the results actually will go
     thefacetview += '<table class="table table-striped table-bordered" id="facetview_results" dir="auto"></table>'
     // thefacetview += '<div class="div div-striped div-bordered" id="facetview_results" dir="auto"></div>'
 
     // make space at the bottom for the pager
-    thefacetview += '<div class="facetview_metadata"></div>';
+    thefacetview += '<div class="row facetview_metadata"></div>';
 
     // debug window near the bottom
     if (options.debug) {
@@ -183,7 +183,7 @@ function searchOptions(options) {
     var searchbox = '<input type="text" class="facetview_freetext form-control" name="q" value="" placeholder="Enter search" />';
     searchbox += searchbutton;
 
-    var searchOptions = '<form class="form-inline">' + sharesave + controls_left + searchfields + searchbox + "</form>";
+    var searchOptions = '<div class="col-xs-12"><form class="form-inline">' + sharesave + controls_left + searchfields + searchbox + "</form></div>";
 
     // share and save link
     var sharebox = "";
@@ -817,7 +817,7 @@ function basicPager(options) {
     var nextlink = '<a class="page-link facetview_increment">Next &raquo;</a>';
     if (options.data.found <= to) { nextlink = "<a class='page-link facetview_increment facetview_inactive_link'>..</a>" }
 
-    var meta = '<div><ul class="pagination">';
+    var meta = '<div class="col-xs-6"><ul class="pagination">';
     meta += '<li class="page-item prev">' + backlink + '</li>';
     meta += '<li class="page-item active"><a class="page-link">' + from + ' &ndash; ' + to + ' of ' + total + '</a></li>';
     meta += '<li class="page-item next">' + nextlink + '</li>';
