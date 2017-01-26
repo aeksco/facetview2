@@ -65,13 +65,13 @@ function theFacetview(options) {
     thefacetview += '<div class="facetview_search_options_container"></div>';
 
     // make space for the selected filters
-    thefacetview += '<div style="margin-top: 20px"><div class="row"><div class="col-md-12"><div class="btn-toolbar" id="facetview_selectedfilters"></div></div></div></div>';
+    thefacetview += '<div class="row"><div class="col-md-12"><div class="btn-toolbar" id="facetview_selectedfilters"></div></div></div>';
 
     // make space at the top for the pager
-    thefacetview += '<div class="facetview_metadata" style="margin-top:20px;"></div>';
+    thefacetview += '<div class="facetview_metadata"></div>';
 
     // insert loading notification
-    thefacetview += '<div class="facetview_searching" style="display:none"></div>'
+    thefacetview += '<div class="hide hidden facetview_searching" style="display:none"></div>'
 
     // insert the table within which the results actually will go
     thefacetview += '<table class="table table-striped table-bordered" id="facetview_results" dir="auto"></table>'
@@ -113,33 +113,33 @@ function searchOptions(options) {
     // share and save link button
     var sharesave = "";
     if (options.sharesave_link) {
-        sharesave = '<div class="form-group"> \
-                <div class="input-group"> \
-                  <button class="btn btn-secondary facetview_sharesave" title="Share a link to this search" href="" style="margin-left: 10px"> \
+        sharesave = '<button class="btn btn-secondary m-r-1 facetview_sharesave" title="Share a link to this search" href=""> \
                       <i class="fa fa-share"></i> \
-                  </button> \
-                </div> \
-            </div>';
+                      &nbsp; Share\
+                    </button>';
     }
 
     var sortbutton = "";
     if (options.search_sortby.length > 0) {
         sortbutton = '<button type="submit" class="btn btn-secondary facetview_order" title="Current order descending. Click to change to ascending" href="desc"> \
                 <i class="fa fa-arrow-down"></i> \
+                &nbsp; Order\
             </button>';
     }
 
-    var buttons = '<span class="btn-group"> \
+    var buttons = '<div class="btn-group m-r-1"> \
             <button type="submit" class="btn btn-secondary facetview_startagain" title="Clear all search settings and start again" href=""> \
                 <i class="fa fa-times"></i> \
+                &nbsp; Clear\
             </button> \
             <button type="submit" class="btn btn-secondary facetview_pagesize" title="Change result set size" href="#">10</button>' + sortbutton +  ' \
-        </span>';
+        </div>';
 
     var sortby = "";
     if (options.search_sortby.length > 0) {
-        sortby = '<select class="facetview_orderby form-control"> \
-                <option value="">order by ... relevance</option>';
+        sortby = '<select class="facetview_orderby form-control c-select m-r-1"> \
+                <option value="" disabled="disabled" selected="selected" hidden="hidden">Order by...</option>'
+                // <option value="">order by ... relevance</option>';
 
         for (var each = 0; each < options.search_sortby.length; each++) {
             var obj = options.search_sortby[each];
@@ -156,8 +156,7 @@ function searchOptions(options) {
         sortby += "</select>";
     }
 
-    var controls_left = '<div class="form-group"> \
-            <div class="input-group">' + buttons + sortby + '</div></div>';
+    var controls_left = buttons + sortby
 
     var searchfields = "";
     if (options.searchbox_fieldselect.length > 0) {
@@ -175,16 +174,14 @@ function searchOptions(options) {
     var searchbutton = "";
     if (options.search_button) {
         searchbutton = "<span class='btn-group'> \
-                <button class='btn btn-info facetview_force_search'> \
+                <button class='btn btn-success facetview_force_search'> \
                     <i class='fa fa-search'></i> \
                 </button> \
             </span>";
     }
 
-    var searchbox = '<div class="form-group"> \
-            <div class="input-group"> \
-                <input type="text" class="facetview_freetext form-control" name="q" value="" placeholder="Enter search" />';
-    searchbox += searchbutton + "</div></div>";
+    var searchbox = '<input type="text" class="facetview_freetext form-control" name="q" value="" placeholder="Enter search" />';
+    searchbox += searchbutton;
 
     var searchOptions = '<form class="form-inline">' + sharesave + controls_left + searchfields + searchbox + "</form>";
 
@@ -815,10 +812,10 @@ function basicPager(options) {
 
     // forward and back-links, taking into account start and end boundaries
     var backlink = '<a class="page-link facetview_decrement">&laquo; Back</a>';
-    if (from < size) { backlink = "<a class='facetview_decrement facetview_inactive_link'>..</a>" }
+    if (from < size) { backlink = "<a class='page-link facetview_decrement facetview_inactive_link'>..</a>" }
 
     var nextlink = '<a class="page-link facetview_increment">Next &raquo;</a>';
-    if (options.data.found <= to) { nextlink = "<a class='facetview_increment facetview_inactive_link'>..</a>" }
+    if (options.data.found <= to) { nextlink = "<a class='page-link facetview_increment facetview_inactive_link'>..</a>" }
 
     var meta = '<div><ul class="pagination">';
     meta += '<li class="page-item prev">' + backlink + '</li>';
@@ -860,9 +857,9 @@ function pageSlider(options) {
         backlink = '<a class="facetview_decrement facetview_inactive_link" style="color:#333;float:left;padding:0 40px 20px 20px;">..</a>'
     }
 
-    var nextlink = '<a alt="next" title="next" class="facetview_increment" style="color:#333;float:right;padding:0 20px 20px 40px;">&gt;</a>';
+    var nextlink = '<a alt="next" title="next" class="page-link facetview_increment" style="color:#333;float:right;padding:0 20px 20px 40px;">&gt;</a>';
     if (options.data.found <= to) {
-        nextlink = '<a class="facetview_increment facetview_inactive_link" style="color:#333;float:right;padding:0 20px 20px 40px;">..</a>'
+        nextlink = '<a class="page-link facetview_increment facetview_inactive_link" style="color:#333;float:right;padding:0 20px 20px 40px;">..</a>'
     }
 
     var meta = '<div style="font-size:20px;font-weight:bold;margin:5px 0 10px 0;padding:5px 0 5px 0;border:1px solid #eee;border-radius:5px;-moz-border-radius:5px;-webkit-border-radius:5px;">';
@@ -985,7 +982,7 @@ function renderActiveTermsFilter(options, facet, field, filter_list) {
     var display = facet.display ? facet.display : facet.field;
     var logic = facet.logic ? facet.logic : options.default_facet_operator;
 
-    var frag = "<div id='facetview_filter_group_" + clean + "' class='btn-group' style='margin-left: 20px'>";
+    var frag = "<div id='facetview_filter_group_" + clean + "' class='label label-primary m-t-1 m-r-1'>";
 
     if (options.show_filter_field) {
         frag += '<span class="facetview_filterselected_text"><strong>' + display + ':</strong>&nbsp;</span>';
@@ -999,7 +996,7 @@ function renderActiveTermsFilter(options, facet, field, filter_list) {
 
         frag += '<span class="facetview_filterselected_text">' + value + '</span>&nbsp;';
         frag += '<a class="facetview_filterselected facetview_clear" data-field="' + field + '" data-value="' + value + '" alt="remove" title="Remove" href="' + value + '">';
-        frag += '<i class="glyphicon glyphicon-black glyphicon-remove" style="margin-top:1px;"></i>';
+        frag += '<i class="fa fa-times"></i>';
         frag += "</a>";
 
         if (i !== filter_list.length - 1 && options.show_filter_logic) {
@@ -1299,7 +1296,7 @@ function renderActiveGeoFilterButton(options, facet, field, value) {
     var frag = "<div id='facetview_filter_group_" + clean + "' class='btn-group'>"
 
     if (options.show_filter_field) {
-        frag += '<button class="btn btn-info facetview_inactive_link facetview_filterselected" href="' + field + '">'
+        frag += '<button class="btn btn-success facetview_inactive_link facetview_filterselected" href="' + field + '">'
         frag += '<span class="facetview_filterselected_text"><strong>' + display + '</strong></span>'
         frag += "</button>"
     }
@@ -1309,7 +1306,7 @@ function renderActiveGeoFilterButton(options, facet, field, value) {
     var data_to = value.to ? " data-to='" + value.to + "' " : ""
     var data_from = value.from ? " data-from='" + value.from + "' " : ""
 
-    frag += '<button class="facetview_filterselected facetview_clear btn btn-info" data-field="' + field + '" ' + data_to + data_from +
+    frag += '<button class="facetview_filterselected facetview_clear btn btn-success" data-field="' + field + '" ' + data_to + data_from +
             ' alt="remove" title="remove" href="#">'
     frag += '<span class="facetview_filterselected_text">' + range.display + '</span> <i class="glyphicon glyphicon-white glyphicon-remove" style="margin-top:1px;"></i>'
     frag += "</button>"
@@ -1350,7 +1347,7 @@ function renderActiveDateHistogramFilterButton(options, facet, field, value) {
         valdisp = facet.value_function(valdisp);
     }
 
-    frag += '<button class="facetview_filterselected facetview_clear btn btn-info" data-field="' + field + '" ' + data_from +
+    frag += '<button class="facetview_filterselected facetview_clear btn btn-success" data-field="' + field + '" ' + data_from +
             ' alt="remove" title="remove" href="#">'
     frag += '<span class="facetview_filterselected_text">' + escapeHtml(valdisp) + '</span> <i class="glyphicon glyphicon-white glyphicon-remove" style="margin-top:1px;"></i>'
     frag += "</button>"

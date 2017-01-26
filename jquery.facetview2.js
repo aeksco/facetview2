@@ -50,7 +50,7 @@ if (!Array.prototype.indexOf) {
  * UTILITIES
  ****************************************************************************/
 
-// first define the bind with delay function from (saves loading it separately) 
+// first define the bind with delay function from (saves loading it separately)
 // https://github.com/bgrins/bindWithDelay/blob/master/bindWithDelay.js
 (function($) {
     $.fn.bindWithDelay = function( type, data, fn, timeout, throttle ) {
@@ -145,7 +145,7 @@ function ie8compat(o) {
 /******************************************************************
  * DEFAULT CALLBACKS
  *****************************************************************/
- 
+
 ///// the lifecycle callbacks ///////////////////////
 function postInit(options, context) {}
 function preSearch(options, context) {}
@@ -186,7 +186,7 @@ function getUrlVars() {
             var newval = decodeURIComponent(hash[1]);
             if (newval[0] == "[" || newval[0] == "{") {
                 // if it looks like a JSON object in string form...
-                // remove " (double quotes) at beginning and end of string to make it a valid 
+                // remove " (double quotes) at beginning and end of string to make it a valid
                 // representation of a JSON object, or the parser will complain
                 newval = newval.replace(/^"/,"").replace(/"$/,"");
                 var newval = JSON.parse(newval);
@@ -197,48 +197,48 @@ function getUrlVars() {
     if (anchor) {
         params['url_fragment_identifier'] = anchor;
     }
-    
+
     return params;
 }
- 
+
 /******************************************************************
  * FACETVIEW ITSELF
  *****************************************************************/
 
 (function($){
     $.fn.facetview = function(options) {
-    
+
         /**************************************************************
          * handle the incoming options, default options and url parameters
          *************************************************************/
-         
+
         // all of the possible options that will be used in the facetview lifecycle
         // along with their documentation
         var defaults = {
             ///// elasticsearch parameters /////////////////////////////
-            
+
             // the base search url which will respond to elasticsearch queries.  Generally ends with _search
             "search_url" : "http://localhost:9200/_search",
-            
+
             // datatype for ajax requests to use - overall recommend using jsonp
             "datatype" : "jsonp",
-            
+
             // if set, should be either * or ~
             // if *, * will be prepended and appended to each string in the freetext search term
-            // if ~, ~ then ~ will be appended to each string in the freetext search term. 
-            // If * or ~ or : are already in the freetext search term, no action will be taken. 
+            // if ~, ~ then ~ will be appended to each string in the freetext search term.
+            // If * or ~ or : are already in the freetext search term, no action will be taken.
             "default_freetext_fuzzify": false, // or ~ or *
-            
+
             // due to a bug in elasticsearch's clustered node facet counts, we need to inflate
             // the number of facet results we need to ensure that the results we actually want are
             // accurate.  This option tells us by how much.
             "elasticsearch_facet_inflation" : 100,
-            
+
             ///// query aspects /////////////////////////////
-            
+
             // list of fields to be returned by the elasticsearch query.  If omitted, full result set is returned
             "fields" : false, // or an array of field names
-            
+
             // list of partial fields to be returned by the elasticsearch query.  If omitted, full result set is returned
             "partial_fields" : false, // or an array of partial fields
 
@@ -246,24 +246,24 @@ function getUrlVars() {
             // references to stored scripts in the back-end ES.  If not false, then an object corresponding to the
             // ES script_fields structure
             "script_fields" : false,
-            
+
             // number of results to display per page (i.e. to retrieve per query)
             "page_size" : 10,
-            
+
             // cursor position in the elasticsearch result set
             "from" : 0,
-            
+
             // list of fields and directions to sort in.  Note that the UI only supports single value sorting
             "sort" : [], // or something like [ {"title" : {"order" : "asc"}} ]
-            
+
             // field on which to focus the freetext search
             "searchfield" : "", // e.g. title.exact
-            
+
             // freetext search string
             "q" : "",
-            
+
             ///// facet aspects /////////////////////////////
-            
+
             // The list of facets to be displayed and used to seed the filtering processes.
             // Facets are complex fields which can look as follows:
             /*
@@ -278,7 +278,7 @@ function getUrlVars() {
                 "tooltip_text" : "<text to use to open the tooltip>",               // sets the text of the tooltip link
 
                 // terms facet only
-                
+
                 "size" : <num>,                                                     // how many terms should the facet limit to
                 "logic" : "AND|OR",                                                 // Whether to AND or OR selected facets together when filtering
                 "order" : "count|reverse_count|term|reverse_term",                  // which standard ordering to use for facet values
@@ -287,16 +287,16 @@ function getUrlVars() {
                 "value_function" : <function>,                                      // function to be called on each value before display
                 "controls" : true|false                                             // should the facet sort/size/bool controls be shown?
                 "ignore_empty_string" : true|false                                  // should the terms facet ignore empty strings in display
-                
+
                 // range facet only
-                
+
                 "range" : [                                                         // list of ranges (in order) which define the filters
                     {"from" : <num>, "to" : <num>, "display" : "<display name>"}    // from = lower bound (inclusive), to = upper boud (exclusive)
                 ],                                                                  // display = display name for this range
                 "hide_empty_range" : true|false,                                    // if there are no results for a given range, should it be hidden
-                
+
                 // geo distance facet only
-                
+
                 "distance" : [                                                      // list of distances (in order) which define the filters
                     {"from" : <num>, "to" : <num>, "display" : "<display name>"}    // from = lower bound (inclusive), to = upper boud (exclusive)
                 ],                                                                  // display = display name for this distance
@@ -312,16 +312,16 @@ function getUrlVars() {
                 "short_display" : <number to display initially>                     // the number of values to show initially (note you should set size=false)
 
                 // admin use only
-                
+
                 "values" : <object>                                                 // the values associated with a successful query on this facet
             }
             */
             "facets" : [],
-            
+
             // user defined extra facets.  These must be pre-formatted for elasticsearch, and they will
             // simply be added to the query at query-time.
             "extra_facets": {},
-            
+
             // default settings for each of the facet properties above.  If a facet lacks a property, it will
             // be initialised to the default
             "default_facet_type" : "terms",
@@ -348,109 +348,109 @@ function getUrlVars() {
 
 
             ///// search bar configuration /////////////////////////////
-            
+
             // list of options by which the search results can be sorted
             // of the form of a list of: { 'display' : '<display name>', 'field' : '<field to sort by>'},
             "search_sortby" : [],
-            
+
             // list of options for fields to which free text search can be constrained
             // of the form of a list of: { 'display' : '<display name>', 'field' : '<field to search on>'},
             "searchbox_fieldselect" : [],
-            
+
             // enable the share/save link feature
             "sharesave_link" : true,
 
             // provide a function which will do url shortening for the sharesave_link box
             "url_shortener" : false,
-            
+
             // on free-text search, default operator for the elasticsearch query system to use
             "default_operator" : "OR",
-            
+
             // enable the search button
             "search_button" : false,
-            
+
             // amount of time between finishing typing and when a query is executed from the search box
             "freetext_submit_delay" : 500,
-            
+
             ///// url configuration /////////////////////////////
-            
+
             // FIXME: should we read in facets from urls, and if we do, what should we do about them?
             // should facets be included in shareable urls.  Turning this on makes them very long, and currently
             // facetview does not read those facets back in if the URLs are parsed
             "include_facets_in_url" : false,
-            
+
             // FIXME: should we read in fields from urls, and if we do, what should we do about them?
             // should fields be included in shareable urls.  Turning this on makes them very long, and currently
             // facetview does not read those fields back in if the URLs are parsed
             "include_fields_in_url" : false,
-            
+
             ///// selected filters /////////////////////////////
-            
+
             // should the facet navigation show filters alongside other facet results which have not been selected
             "selected_filters_in_facet" : true,
-            
+
             // should the "selected filters" area show the name of the facet from which the filter was selected
             "show_filter_field" : true,
-            
+
             // should the "selected filters" area show the boolean logic used by the filter (taken from the facet.logic configuration)
             "show_filter_logic" : true,
-            
+
             // FIXME: add support for pre-defined range filters
             // a set of pre-defined filters which will always be applied to the search.
             // Has the following structure, and works for terms filters only
             // { "<field>" : ["<list of values>"] }
             // requires a facet for the given field to be defined
             "predefined_filters" : {},
-            
+
             // exclude any values that appear in pre-defined filters from any facets
             // This prevents configuration-set filters from ever being seen in a facet, but ensures that
             // they are always included when the search is carried out
             "exclude_predefined_filters_from_facets" : true,
-            
+
             // current active filters
             // DO NOT USE - this is for tracking internal state ONLY
             "active_filters" : {},
-            
+
             ///// general behaviour /////////////////////////////
-            
+
             // after initialisation, begin automatically with a search
             "initialsearch" : true,
-            
-            // enable debug.  If debug is enabled, some technical information will be dumped to a 
+
+            // enable debug.  If debug is enabled, some technical information will be dumped to a
             // visible textarea on the screen
             "debug" : false,
-            
+
             // after search, the results will fade in over this number of milliseconds
             "fadein" : 800,
-            
+
             // should the search url be synchronised with the browser's url bar after search
             // NOTE: does not work in some browsers.  See also share/save link option.
             "pushstate" : true,
-            
+
             ///// render functions /////////////////////////////
-            
+
             // for each render function, see the reference implementation for documentation on how they should work
-            
+
             // render the frame within which the facetview sits
             "render_the_facetview" : theFacetview,
-            
+
             // render the search options - containing freetext search, sorting, etc
             "render_search_options" : searchOptions,
-            
+
             // render the list of available facets.  This will in turn call individual render methods
             // for each facet type
             "render_facet_list" : facetList,
-            
+
             // render the terms facet, the list of values, and the value itself
             "render_terms_facet" : renderTermsFacet,                 // overall framework for a terms facet
             "render_terms_facet_values" : renderTermsFacetValues,    // the list of terms facet values
             "render_terms_facet_result" : renderTermsFacetResult,    // individual terms facet values
-            
+
             // render the range facet, the list of values, and the value itself
             "render_range_facet" : renderRangeFacet,                // overall framework for a range facet
             "render_range_facet_values" : renderRangeFacetValues,   // the list of range facet values
             "render_range_facet_result" : renderRangeFacetResult,   // individual range facet values
-            
+
             // render the geo distance facet, the list of values and the value itself
             "render_geo_facet" : renderGeoFacet,                // overall framework for a geo distance facet
             "render_geo_facet_values" : renderGeoFacetValues,   // the list of geo distance facet values
@@ -460,53 +460,53 @@ function getUrlVars() {
             "render_date_histogram_facet" : renderDateHistogramFacet,
             "render_date_histogram_values" : renderDateHistogramValues,
             "render_date_histogram_result" : renderDateHistogramResult,
-            
+
             // render any searching notification (which will then be shown/hidden as needed)
             "render_searching_notification" : searchingNotification,
-            
+
             // render the paging controls
             "render_results_metadata" : basicPager, // or pageSlider
-            
+
             // render a "results not found" message
             "render_not_found" : renderNotFound,
-            
+
             // render an individual result record
             "render_result_record" : renderResultRecord,
-            
+
             // render a terms filter interface component (e.g. the filter name, boolean operator used, and selected values)
             "render_active_terms_filter" : renderActiveTermsFilter,
-            
+
             // render a range filter interface component (e.g. the filter name and the human readable description of the selected range)
             "render_active_range_filter" : renderActiveRangeFilter,
-            
+
             // render a geo distance filter interface component (e.g. the filter name and the human readable description of the selected range)
             "render_active_geo_filter" : renderActiveGeoFilter,
 
             // render a date histogram/range interface component (e.g. the filter name and the human readable description of the selected range)
             "render_active_date_histogram_filter" : renderActiveDateHistogramFilter,
-            
+
             ///// configs for standard render functions /////////////////////////////
-            
+
             // if you provide your own render functions you may or may not want to re-use these
             "resultwrap_start":"<tr><td>",
             "resultwrap_end":"</td></tr>",
             "result_display" : [ [ {"pre" : "<strong>ID</strong>:", "field": "id", "post" : "<br><br>"} ] ],
             "results_render_callbacks" : {},
-            
+
             ///// behaviour functions /////////////////////////////
-            
+
             // called at the start of searching to display the searching notification
             "behaviour_show_searching" : showSearchingNotification,
-            
+
             // called at the end of searching to hide the searching notification
             "behaviour_finished_searching" : hideSearchingNotification,
-            
+
             // called after rendering a facet to determine whether it is visible/disabled
             "behaviour_facet_visibility" : setFacetVisibility,
-            
+
             // called after rendering a facet to determine whether it should be open or closed
             "behaviour_toggle_facet_open" : setFacetOpenness,
-            
+
             // called after changing the result set order to update the search bar
             "behaviour_results_ordering" : setResultsOrder,
 
@@ -542,31 +542,31 @@ function getUrlVars() {
 
             "behaviour_date_histogram_showall" : dateHistogramShowAll,
             "behaviour_date_histogram_showless" : dateHistogramShowLess,
-            
+
             ///// lifecycle callbacks /////////////////////////////
-            
+
             // the default callbacks don't have any effect - replace them as needed
-            
+
             "post_init_callback" : postInit,
             "pre_search_callback" : preSearch,
             "post_search_callback" : postSearch,
             "pre_render_callback" : preRender,
             "post_render_callback" : postRender,
-            
+
             ///// internal state monitoring /////////////////////////////
-            
+
             // these are used internally DO NOT USE
             // they are here for completeness and documentation
-            
+
             // is a search currently in progress
             "searching" : false,
-            
+
             // the raw query object
             "queryobj" : false,
-            
+
             // the raw data coming back from elasticsearch
             "rawdata" : false,
-            
+
             // the parsed data from elasticsearch
             "data" : false,
 
@@ -576,15 +576,15 @@ function getUrlVars() {
             // should the short url or the long url be displayed to the user?
             "show_short_url" : false
         };
-        
+
         function deriveOptions() {
             // cleanup for ie8 purposes
             ie8compat(options);
             ie8compat(defaults);
-            
+
             // extend the defaults with the provided options
             var provided_options = $.extend(defaults, options);
-            
+
             // deal with the options that come from the url, which require some special treatment
             var url_params = getUrlVars();
             var url_options = {};
@@ -595,7 +595,7 @@ function getUrlVars() {
                 url_options["url_fragment_identifier"] = url_params["url_fragment_identifier"]
             }
             provided_options = $.extend(provided_options, url_options);
-            
+
             // copy the _selected_operators data into the relevant facets
             // for each pre-selected operator, find the related facet and set its "logic" property
             var so = provided_options._selected_operators ? provided_options._selected_operators : {};
@@ -613,7 +613,7 @@ function getUrlVars() {
             if ("_selected_operators" in provided_options) {
                 delete provided_options._selected_operators
             }
-            
+
             // tease apart the active filters from the predefined filters
             if (!provided_options.predefined_filters) {
                 provided_options["active_filters"] = provided_options._active_filters
@@ -642,7 +642,7 @@ function getUrlVars() {
                     }
                 }
             }
-            
+
             // copy in the defaults to the individual facets when they are needed
             for (var i=0; i < provided_options.facets.length; i=i+1) {
                 var facet = provided_options.facets[i];
@@ -670,10 +670,10 @@ function getUrlVars() {
                 if (!("tooltip" in facet)) { facet["tooltip"] = provided_options.default_tooltip }
                 if (!("tooltip_text" in facet)) { facet["tooltip_text"] = provided_options.default_tooltip_text }
             }
-            
+
             return provided_options
         }
-        
+
         /******************************************************************
          * OPTIONS MANAGEMENT
          *****************************************************************/
@@ -681,7 +681,7 @@ function getUrlVars() {
         function uiFromOptions() {
             // set the current page size
             options.behaviour_set_page_size(options, obj, {size: options.page_size});
-            
+
             // set the search order
             // NOTE: that this interface only supports single field ordering
             var sorting = options.sort;
@@ -697,13 +697,13 @@ function getUrlVars() {
                 }
                 break
             }
-            
+
             // set the search field
             options.behaviour_set_search_field(options, obj, {field : options.searchfield});
-            
+
             // set the search string
             options.behaviour_set_search_string(options, obj, {q: options.q});
-            
+
             // for each facet, set the facet size, order and and/or status
             for (var i=0; i < options.facets.length; i=i+1) {
                 var f = options.facets[i];
@@ -714,13 +714,13 @@ function getUrlVars() {
                 options.behaviour_set_facet_sort(options, obj, {facet : f});
                 options.behaviour_set_facet_and_or(options, obj, {facet : f});
             }
-            
+
             // for any existing filters, render them
             options.behaviour_set_selected_filters(options, obj);
         }
-        
+
         function urlFromOptions() {
-            
+
             if (options.pushstate && 'pushState' in window.history) {
                 var querypart = shareableUrl(options, true, true);
                 window.history.pushState("", "search", querypart);
@@ -729,7 +729,7 @@ function getUrlVars() {
             // also set the default shareable url at this point
             setShareableUrl()
         }
-        
+
         /******************************************************************
          * DEBUG
          *****************************************************************/
@@ -737,17 +737,17 @@ function getUrlVars() {
         function addDebug(msg, context) {
             $(".facetview_debug", context).show().find("textarea").append(msg + "\n\n")
         }
-        
+
         /**************************************************************
          * functions for managing search option events
          *************************************************************/
-        
+
         /////// paging /////////////////////////////////
-        
+
         // adjust how many results are shown
         function clickPageSize(event) {
             event.preventDefault();
-            var newhowmany = prompt('Currently displaying ' + options.page_size + 
+            var newhowmany = prompt('Currently displaying ' + options.page_size +
                 ' results per page. How many would you like instead?');
             if (newhowmany) {
                 options.page_size = parseInt(newhowmany);
@@ -758,40 +758,40 @@ function getUrlVars() {
         }
 
         /////// start again /////////////////////////////////
-        
+
         // erase the current search and reload the window
         function clickStartAgain(event) {
             event.preventDefault();
             var base = window.location.href.split("?")[0];
             window.location.replace(base);
         }
-        
+
         /////// search ordering /////////////////////////////////
-        
+
         function clickOrder(event) {
             event.preventDefault();
-            
+
             // switch the sort options around
             if ($(this).attr('href') == 'desc') {
                 options.behaviour_set_order(options, obj, {order: "asc"})
             } else {
                 options.behaviour_set_order(options, obj, {order: "desc"})
             };
-            
+
             // synchronise the new sort with the options
             saveSortOption();
-            
+
             // reset the cursor and issue a search
             options.from = 0;
             doSearch();
         }
-        
+
         function changeOrderBy(event) {
             event.preventDefault();
-            
+
             // synchronise the new sort with the options
             saveSortOption();
-            
+
             // reset the cursor and issue a search
             options.from = 0;
             doSearch();
@@ -815,7 +815,7 @@ function getUrlVars() {
                     sortobj[sortchoice] = {'order': $('.facetview_order', obj).attr('href')};
                     sorting.push(sortobj);
                 }
-                
+
                 options.sort = sorting;
             } else {
                 sortobj = {};
@@ -824,9 +824,9 @@ function getUrlVars() {
                 options.sort = sorting
             }
         }
-        
+
         /////// search fields /////////////////////////////////
-        
+
         // adjust the search field focus
         function changeSearchField(event) {
             event.preventDefault();
@@ -835,7 +835,7 @@ function getUrlVars() {
             options.searchfield = field;
             doSearch();
         };
-        
+
         // keyup in search box
         function keyupSearchText(event) {
             event.preventDefault();
@@ -844,7 +844,7 @@ function getUrlVars() {
             options.q = q;
             doSearch()
         }
-        
+
         // click of the search button
         function clickSearch() {
             event.preventDefault();
@@ -855,7 +855,7 @@ function getUrlVars() {
         }
 
         /////// share save link /////////////////////////////////
-        
+
         // show the current url with the result set as the source param
         function clickShareSave(event) {
             event.preventDefault();
@@ -908,27 +908,27 @@ function getUrlVars() {
                 options.behaviour_share_url(options, obj);
             }
         }
-        
+
         /**************************************************************
          * functions for handling facet events
          *************************************************************/
 
         /////// show/hide filter values /////////////////////////////////
-        
+
         // show the filter values
         function clickFilterShow(event) {
             event.preventDefault();
-            
+
             var name = $(this).attr("href");
             var facet = selectFacet(options, name);
             var el = facetElement("#facetview_filter_", name, obj);
-            
+
             facet.open = !facet.open;
             options.behaviour_toggle_facet_open(options, obj, facet)
         }
-        
+
         /////// change facet length /////////////////////////////////
-        
+
         // adjust how many results are shown
         function clickMoreFacetVals(event) {
             event.preventDefault();
@@ -947,11 +947,11 @@ function getUrlVars() {
         }
 
         /////// sorting facets /////////////////////////////////
-        
+
         function clickSort(event) {
             event.preventDefault();
             var sortwhat = selectFacet(options, $(this).attr('href'));
-            
+
             var cycle = {
                 "term" : "reverse_term",
                 "reverse_term" : "count",
@@ -962,14 +962,14 @@ function getUrlVars() {
             options.behaviour_set_facet_sort(options, obj, {facet: sortwhat});
             doSearch();
         }
-        
+
         /////// AND vs OR on facet selection /////////////////////////////////
-        
+
         // function to switch filters to OR instead of AND
         function clickOr(event) {
             event.preventDefault();
             var orwhat = selectFacet(options, $(this).attr('href'));
-            
+
             var cycle = {
                 "OR" : "AND",
                 "AND" : "OR"
@@ -995,7 +995,7 @@ function getUrlVars() {
         }
 
         /////// facet values /////////////////////////////////
-        
+
         function setUIFacetResults(facet) {
             var el = facetElement("#facetview_filter_", facet["field"], obj);
 
@@ -1003,11 +1003,11 @@ function getUrlVars() {
             el.find(".facetview_date_histogram_short", obj).remove();
             el.find(".facetview_date_histogram_full", obj).remove();
             el.find('.facetview_filtervalue', obj).remove();
-            
+
             if (!("values" in facet)) {
                 return
             }
-            
+
             var frag = undefined;
             if (facet.type === "terms") {
                 frag = options.render_terms_facet_values(options, facet)
@@ -1022,14 +1022,14 @@ function getUrlVars() {
             if (frag) {
                 el.append(frag)
             }
-            
+
             options.behaviour_toggle_facet_open(options, obj, facet);
-            
+
             // FIXME: probably all bindings should come with an unbind first
             // enable filter selection
             $('.facetview_filterchoice', obj).unbind('click', clickFilterChoice);
             $('.facetview_filterchoice', obj).bind('click', clickFilterChoice);
-            
+
             // enable filter removal
             $('.facetview_filterselected', obj).unbind('click', clickClearFilter);
             $('.facetview_filterselected', obj).bind('click', clickClearFilter);
@@ -1042,12 +1042,12 @@ function getUrlVars() {
             $(".facetview_tooltip_more").unbind("click", clickTooltipMore).bind("click", clickTooltipMore);
             $(".facetview_tooltip_less").unbind("click", clickTooltipLess).bind("click", clickTooltipLess);
         }
-        
+
         /////// selected filters /////////////////////////////////
-        
+
         function clickFilterChoice(event) {
             event.preventDefault()
-            
+
             var field = $(this).attr("data-field");
             var facet = selectFacet(options, field);
             var value = {};
@@ -1070,26 +1070,26 @@ function getUrlVars() {
                 if (to) { value["to"] = to }
             }
             // FIXME: how to handle clicks on statistical facet (if that even makes sense) or terms_stats facet
-            
+
             // update the options and the filter display.  No need to update
             // the facet, as we'll issue a search straight away and it will
             // get updated automatically
             selectFilter(field, value);
             options.behaviour_set_selected_filters(options, obj);
-            
+
             // reset the result set to the beginning and search again
             options.from = 0;
             doSearch();
         }
-        
+
         function selectFilter(field, value) {
             // make space for the filter in the active filters list
             if (!(field in options.active_filters)) {
                 options.active_filters[field] = []
             }
-            
+
             var facet = selectFacet(options, field)
-            
+
             if (facet.type === "terms") {
                 // get the current values for that filter
                 var filter = options.active_filters[field];
@@ -1109,7 +1109,7 @@ function getUrlVars() {
 
             // FIXME: statistical facet support here?
         }
-        
+
         function deSelectFilter(facet, field, value) {
             if (field in options.active_filters) {
                 var filter = options.active_filters[field];
@@ -1135,7 +1135,7 @@ function getUrlVars() {
             if ($(this).hasClass("facetview_inactive_link")) {
                 return
             }
-            
+
             var field = $(this).attr("data-field");
             var facet = selectFacet(options, field);
             var value = {};
@@ -1155,10 +1155,10 @@ function getUrlVars() {
                 value = $(this).attr("data-from");
             }
             // FIXMe: statistical facet
-            
+
             deSelectFilter(facet, field, value);
             publishSelectedFilters();
-            
+
             // reset the result set to the beginning and search again
             options.from = 0;
             doSearch();
@@ -1170,7 +1170,7 @@ function getUrlVars() {
             $('.facetview_filterselected', obj).unbind('click', clickClearFilter);
             $('.facetview_filterselected', obj).bind('click', clickClearFilter);
         }
-        
+
         function facetVisibility() {
             $('.facetview_filters', obj).each(function() {
                 var facet = selectFacet(options, $(this).attr('data-href'));
@@ -1238,11 +1238,11 @@ function getUrlVars() {
             el.find(".facetview_tooltip_value").hide();
             el.find(".facetview_tooltip").show();
         }
-        
+
         /**************************************************************
          * result metadata/paging handling
          *************************************************************/
-        
+
         // decrement result set
         function decrementPage(event) {
             event.preventDefault();
@@ -1253,7 +1253,7 @@ function getUrlVars() {
             options.from < 0 ? options.from = 0 : "";
             doSearch();
         };
-        
+
         // increment result set
         function incrementPage(event) {
             event.preventDefault();
@@ -1263,9 +1263,9 @@ function getUrlVars() {
             options.from = parseInt(options.from) + parseInt(options.page_size);
             doSearch();
         };
-        
+
         /////// display results metadata /////////////////////////////////
-        
+
         function setUIResultsMetadata() {
             if (!options.data.found) {
                 $('.facetview_metadata', obj).html("");
@@ -1276,17 +1276,20 @@ function getUrlVars() {
             $('.facetview_decrement', obj).bind('click', decrementPage);
             $('.facetview_increment', obj).bind('click', incrementPage);
         }
-        
+
         /**************************************************************
          * result set display
          *************************************************************/
-        
+
         function setUINotFound() {
             frag = options.render_not_found();
             $('#facetview_results', obj).html(frag);
         }
-        
+
         function setUISearchResults() {
+
+            return options.setUISearchResults(options)
+
             var frag = ""
             for (var i = 0; i < options.data.records.length; i++) {
                 var record = options.data.records[i];
@@ -1297,31 +1300,31 @@ function getUrlVars() {
             // FIXME: is possibly a debug feature?
             // $('.facetview_viewrecord', obj).bind('click', viewrecord);
         }
-        
+
         /**************************************************************
          * search handling
          *************************************************************/
-        
+
         function querySuccess(rawdata, results) {
             if (options.debug) {
                 addDebug(JSON.stringify(rawdata));
                 addDebug(JSON.stringify(results))
             }
-            
+
             // record the data coming from elasticsearch
             options.rawdata = rawdata;
             options.data = results;
-            
+
             // if a post search callback is provided, run it
             if (typeof options.post_search_callback == 'function') {
                 options.post_search_callback(options, obj);
             }
-            
+
             // if a pre-render callback is provided, run it
             if (typeof options.pre_render_callback == 'function') {
                 options.pre_render_callback(options, obj);
             }
-            
+
             // for each facet, get the results and add them to the page
             for (var each = 0; each < options.facets.length; each++) {
                 // get the facet, the field name and the size
@@ -1332,7 +1335,7 @@ function getUrlVars() {
 
                 var field = facet['field'];
                 var size = facet.hasOwnProperty("size") ? facet["size"] : options.default_facet_size;
-                
+
                 // get the records to be displayed, limited by the size and record against
                 // the options object
                 var records = results["facets"][field];
@@ -1365,26 +1368,26 @@ function getUrlVars() {
                     setUIFacetResults(facet)
                 }
             }
-            
+
             // set the facet visibility
             facetVisibility();
-            
+
             // add the results metadata (paging, etc)
             setUIResultsMetadata();
-            
+
             // show the not found notification if necessary, otherwise render the results
             if (!options.data.found) {
                 setUINotFound()
             } else {
                 setUISearchResults()
             }
-            
+
             // if a post-render callback is provided, run it
             if (typeof options.post_render_callback == 'function') {
                 options.post_render_callback(options, obj);
             }
         }
-        
+
         function queryComplete(jqXHR, textStatus) {
             options.behaviour_finished_searching(options, obj);
             options.searching = false;
@@ -1401,7 +1404,7 @@ function getUrlVars() {
             }
             publishSelectedFilters();
         }
-        
+
         function doSearch() {
             // FIXME: does this have any weird side effects?
             // if a search is currently going on, don't do anything
@@ -1413,12 +1416,12 @@ function getUrlVars() {
 
             // invalidate the existing short url
             options.current_short_url = false;
-            
+
             // if a pre search callback is provided, run it
             if (typeof options.pre_search_callback === 'function') {
                 options.pre_search_callback(options, obj);
             }
-            
+
             // trigger any searching notification behaviour
             options.behaviour_show_searching(options, obj);
 
@@ -1433,10 +1436,10 @@ function getUrlVars() {
                 var querystring = serialiseQueryObject(queryobj);
                 addDebug(querystring)
             }
-            
+
             // augment the URL bar if possible, and the share/save link
             urlFromOptions();
-            
+
             // issue the query to elasticsearch
             doElasticSearchQuery({
                 search_url: options.search_url,
@@ -1446,50 +1449,50 @@ function getUrlVars() {
                 complete: queryComplete
             })
         }
-        
+
         /**************************************************************
          * build all of the fragments that we want to render
          *************************************************************/
-        
+
         // set the externally facing facetview options
         $.fn.facetview.options = deriveOptions();
         var options = $.fn.facetview.options;
-        
+
         // render the facetview frame which will then be populated
         var thefacetview = options.render_the_facetview(options);
         var thesearchopts = options.render_search_options(options);
         var thefacets = options.render_facet_list(options);
         var searching = options.render_searching_notification(options);
-        
+
         // now create the plugin on the page for each div
         var obj = undefined;
         return this.each(function() {
             // get this object
             obj = $(this);
-            
+
             // what to do when ready to go
             var whenready = function() {
                 // append the facetview object to this object
                 obj.append(thefacetview);
-                
+
                 // add the search controls
                 $(".facetview_search_options_container", obj).html(thesearchopts);
-                
+
                 // add the facets (empty at this stage), then set their visibility, which will fall back to the
                 // worst case scenario for visibility - it means facets won't disappear after the search, only reappear
                 if (thefacets != "") {
                     $('#facetview_filters', obj).html(thefacets);
                     facetVisibility();
                 }
-                
+
                 // add the loading notification
                 if (searching != "") {
                     $(".facetview_searching", obj).html(searching)
                 }
-                
+
                 // populate all the page UI framework from the options
                 uiFromOptions(options);
-                
+
                 // bind the search control triggers
                 $(".facetview_startagain", obj).bind("click", clickStartAgain);
                 $('.facetview_pagesize', obj).bind('click', clickPageSize);
@@ -1501,18 +1504,18 @@ function getUrlVars() {
                 $('.facetview_force_search', obj).bind('click', clickSearch);
                 $('.facetview_shorten_url', obj).bind('click', clickShortenUrl);
                 $('.facetview_lengthen_url', obj).bind('click', clickLengthenUrl);
-                
+
                 // bind the facet control triggers
                 $('.facetview_filtershow', obj).bind('click', clickFilterShow);
                 $('.facetview_morefacetvals', obj).bind('click', clickMoreFacetVals);
                 $('.facetview_sort', obj).bind('click', clickSort);
                 $('.facetview_or', obj).bind('click', clickOr);
-                
+
                 // if a post initialisation callback is provided, run it
                 if (typeof options.post_init_callback === 'function') {
                     options.post_init_callback(options, obj);
                 }
-                
+
                 // if an initial search is requested, then issue it
                 if (options.initialsearch) { doSearch() }
             };
@@ -1523,5 +1526,5 @@ function getUrlVars() {
     // facetview options are declared as a function so that they can be retrieved
     // externally (which allows for saving them remotely etc)
     $.fn.facetview.options = {};
-    
+
 })(jQuery);
